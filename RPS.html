@@ -1,0 +1,290 @@
+<!Doctype html>
+
+<html>
+<head>
+	<title>Ben's Rock Paper Scissors</title>
+<script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+<nav style="background-color:#ECF1EF; color:#DEB887; text-align: center; font-size: 24px"> Rock Paper Scissors </nav>
+				<div class="row" id="start" style="margin:20px"> 
+
+
+              <form>
+                <div class="form-group">
+                  <label for="name"></label>
+                  <input class="form-control" id="user-name" type="text">
+                </div>
+                <button class="btn btn-primary" id="start-button">Start</button>
+                </form>
+                </div>
+<div class="row" id="greeting"> </div>
+<div class="row" id="turn"> </div>
+<div class="row" id="game">
+<div class="col-md-3" id="player1" style="height: 200px; background-color: #FDF2EE; margin:30px; border-color: #458B00; border-style: solid">
+		<div id="name1"></div>
+		<button id="rock1">Rock</button>
+		<button id="paper1">Paper</button>
+		<button id="scissors1">Scissors</button>
+		<div>WINS</div>
+		<div id="wins1"> </div>
+		<div>LOSEES</div>
+		<div id="losses1"> </div>
+ </div>
+<div class="col-md-3" id="result" style="height: 200px;  background-color: #FFFFF2; margin:30px; border-color: #458B00; border-style: solid"> </div>
+<div class="col-md-3" id="player2" style="height: 200px; background-color: #F1EDC2; margin:30px;border-color: #458B00; border-style: solid"> 
+		<div id="name2"></div>
+		<button id="rock2">Rock</button>
+		<button id="paper2">Paper</button>
+		<button id="scissors2">Scissors</button>
+		<div>WINS</div>
+		<div id="wins2"> </div>
+		<div>LOSSES</div>
+		<div id="losses2"> </div>
+
+</div>
+</div>
+<div class="row" id="display" style="background-color: white; height: 200px; border-color: #458B00; border-style: solid; margin: 10px"></div>
+  <input class="form-control" id="chat-message" type="text">
+<button id ="submit-button" style="margin:20px">Submit</button>
+
+</body>
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+
+
+
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBBAR_v2iTlYpv_RC5OQ1ECHjEblO3kJ1E",
+    authDomain: "rpsgame-b8573.firebaseapp.com",
+    databaseURL: "https://rpsgame-b8573.firebaseio.com",
+    projectId: "rpsgame-b8573",
+    storageBucket: "rpsgame-b8573.appspot.com",
+    messagingSenderId: "83425865849"
+  };
+  firebase.initializeApp(config);
+
+  var database = firebase.database();
+  													var connectionsRef = database.ref("/connections");
+
+// '.info/connected' is a special location provided by Firebase that is updated every time
+// the client's connection state changes.
+// '.info/connected' is a boolean value, true if the client is connected and false if they are not.
+var connectedRef = database.ref(".info/connected");
+
+// When the client's connection state changes...
+connectedRef.on("value", function(snap) {
+
+  // If they are connected..
+  if (snap.val()) {
+
+    // Add user to the connections list.
+    var con = connectionsRef.push(true);
+
+    // Remove user from the connection list when they disconnect.
+    con.onDisconnect().remove();
+  }
+});
+
+// When first loaded or when the connections list changes...
+connectionsRef.on("value", function(snap) {
+
+  // Display the viewer count in the html.
+  // The number of online users is the number of children in the connections list.
+  var numberOfUsers=(snap.numChildren());
+
+database.ref("/number").set({
+	online: numberOfUsers
+})		
+
+//if(numberOfUsers===1){chatsLocation.removeValue()}							
+
+
+var rock = "rock";
+var paper ="paper";
+var scissors="scissors";												   
+											
+//if player one chooses this and player 2 chooses that then this happens.
+
+
+//function to determine who is player 1 and who is player 2.
+
+
+
+
+
+									if (numberOfUsers===1){$("#start-button").on("click", function(event){
+									event.preventDefault();
+									playerName=$("#user-name").val().trim();
+									console.log(playerName);
+									database.ref("/players/1").set({
+
+									name: playerName
+
+
+									})
+
+
+
+console.log(playerName);
+	
+console.log(numberOfUsers);
+//chat function here:
+//here we put the values into the databse
+$("#submit-button").on("click",function(event){
+var message =$("#chat-message").val();
+
+var chatsLocation = database.ref("/chat")
+
+chatsLocation.set({
+displayMessage: message,
+nametag: playerName
+})
+
+})
+//other side to the same coin.  here we get them out.
+database.ref("/chat").on("value", function(snapshot){
+	//console.log(snapshot.val().displayMessage);
+
+$("#display").prepend(" said "+(snapshot.val().displayMessage));
+$("#display").prepend(snapshot.val().nametag)
+
+})
+
+$("#rock1").on("click", function(choice){
+database.ref("/players/1").set({
+player1Choice:  rock,
+name: playerName
+})
+})
+
+$("#paper1").on("click", function(choice){
+database.ref("/players/1").set({
+player1Choice:  paper,
+name: playerName
+})
+})
+
+$("#scissors1").on("click", function(choice){
+database.ref("/players/1").set({
+player1Choice:  scissors,
+name: playerName
+})
+})
+
+////////////////this is the end of the player one function**************////////////////////*************
+									})
+
+
+
+
+
+									}
+									 if(numberOfUsers===2){$("#start-button").on("click",function(event){
+									event.preventDefault()
+									playerName=$("#user-name").val().trim();
+									console.log(playerName);
+									database.ref("/players/2").set({
+									name:playerName
+
+									})
+
+									
+								
+
+
+									
+
+
+
+console.log(playerName);
+	
+console.log(numberOfUsers);
+//chat function here:
+//here we put the values into the databse
+$("#submit-button").on("click",function(event){
+var message =$("#chat-message").val();
+
+
+database.ref("/chat").set({
+displayMessage: message,
+nametag: playerName
+})
+
+
+})
+//other side to the same coin.  here we get them out.
+database.ref("/chat").on("value", function(snapshot){
+	//console.log(snapshot.val().displayMessage);
+
+
+$("#display").prepend(" said "+(snapshot.val().displayMessage));
+$("#display").prepend(snapshot.val().nametag)
+
+})
+
+$("#rock2").on("click", function(choice){
+database.ref("/players/2").set({
+player2Choice:  rock,
+name: playerName
+})
+})
+
+$("#paper2").on("click", function(choice){
+database.ref("/players/2").set({
+player2Choice:  paper,
+name: playerName
+})
+})
+
+$("#scissors2").on("click", function(choice){
+database.ref("/players/2").set({
+player2Choice:  scissors,
+name: playerName
+})
+})
+									})}
+
+//////here is our game function.
+
+var wins1=0
+var wins2=0
+var losses1=0
+var losses2=0
+database.ref("/players/1").on("value", function(game){
+var oneChoice=game.val().player1Choice;
+
+database.ref("/players/2").on("value", function(game){
+var twoChoice=game.val().player2Choice;
+
+
+
+
+
+if(oneChoice===rock&&twoChoice===paper){wins2++; losses1++;$("#wins2").html(wins2);
+$("#losses1").html(losses1); oneChoice=0; twoChoice=0;}
+if(oneChoice===paper&&twoChoice===scissors){wins2++; losses1++;$("#wins2").html(wins2);
+$("#losses1").html(losses1);oneChoice=0; twoChoice=0;}
+if(oneChoice===scissors&&twoChoice===rock){wins2++; losses1++;$("#wins2").html(wins2);
+$("#losses1").html(losses1);oneChoice=0; twoChoice=0;}
+if(oneChoice===rock&&twoChoice===scissors){wins1++; losses2++;$("#wins1").html(wins1);
+$("#losses2").html(losses2);oneChoice=0; twoChoice=0;}
+if(oneChoice===paper&&twoChoice===rock){wins1++; losses2++;$("#wins1").html(wins1);
+$("#losses2").html(losses2);oneChoice=0; twoChoice=0;}
+if(oneChoice===scissors&&twoChoice===paper){wins1++; losses2++;$("#wins1").html(wins1);
+$("#losses2").html(losses2);oneChoice=0; twoChoice=0;}
+
+
+})
+})	
+});
+	
+
+</script>
+</html>
+
