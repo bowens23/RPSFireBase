@@ -84,10 +84,10 @@ connectedRef.on("value", function(snap) {
   if (snap.val()) {
 
     // Add user to the connections list.
-    var con = connectionsRef.push(true);
+    var allUserInput = connectionsRef.push(true);
 
     // Remove user from the connection list when they disconnect.
-    con.onDisconnect().remove();
+    allUserInput.onDisconnect().remove();
   }
 });
 
@@ -151,9 +151,9 @@ nametag: playerName
 database.ref("/chat").on("value", function(snapshot){
 	//console.log(snapshot.val().displayMessage);
 
-$("#display").prepend(" said "+(snapshot.val().displayMessage));
-$("#display").prepend(snapshot.val().nametag)
-
+var input =((snapshot.val().nametag)+" said "+(snapshot.val().displayMessage))
+var paste = $("<div>"+input+"</div>")
+$("#display").prepend(paste)
 })
 
 $("#rock1").on("click", function(choice){
@@ -223,9 +223,10 @@ database.ref("/chat").on("value", function(snapshot){
 	//console.log(snapshot.val().displayMessage);
 
 
-$("#display").prepend(" said "+(snapshot.val().displayMessage));
-$("#display").prepend(snapshot.val().nametag)
+var input =((snapshot.val().nametag)+" said "+(snapshot.val().displayMessage))
 
+var paste = $("<div>"+input+"</div>")
+$("#display").prepend(paste)
 })
 
 $("#rock2").on("click", function(choice){
